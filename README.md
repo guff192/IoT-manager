@@ -2,7 +2,7 @@
 ---
 
 
-![[assets/AppDiagram.png]]
+<img src="https://raw.githubusercontent.com/guff192/IoT-manager/refs/heads/main/assets/AppDiagram.png" width=1080>
 
 
 ## Компоненты приложения
