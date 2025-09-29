@@ -1,0 +1,100 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Command to run the FastAPI app with Uvicorn, listening on all interfaces
+    command: uv run -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    # Mount the current directory into the container for hot-reloading
+    volumes:
+      - .:/app
+    # Expose the API server port to the host machine
+    ports:
+      - "8000:8000"
+    # Dependencies on other services
+    depends_on:
+      - rabbitmq
+      - redis
+      - postgres
+    # Set environment variables for Celery and database connection
+    environment:
+      # Use RabbitMQ as the broker for Celery
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      # Use Redis as the result backend for Celery (optional but useful)
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      # Database connection string for PostgreSQL
+      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+
+  # The Celery worker, which handles asynchronous tasks
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Command to start the Celery worker
+    command: uv run -m celery -A app.main.celery worker --loglevel=info
+    # Mount the current directory
+    volumes:
+      - .:/app
+    # Dependencies to ensure the broker and database are running first
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+    # Set environment variables
+    environment:
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+
+  # The RabbitMQ message broker service
+  rabbitmq:
+    image: "rabbitmq:3-management-alpine"
+    # Set the hostname and configure management interface
+    hostname: rabbitmq
+    ports:
+      # Expose the management port
+      - "15672:15672"
+      # Expose the main AMQP port
+      - "5672:5672"
+
+  # The Redis cache service
+  redis:
+    image: "redis:alpine"
+    # Map the Redis port
+    ports:
+      - "6379:6379"
+
+  # The PostgreSQL database service
+  postgres:
+    image: "postgres:17-alpine"
+    # Set environment variables for database configuration
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    # Map the PostgreSQL port
+    ports:
+      - "5432:5432"
+    # Persist data in a named volume
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+
+# Named volume to store PostgreSQL data persistently
+volumes:
+  postgres_data:
+
+
