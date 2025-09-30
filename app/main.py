@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from app.core.db import db_ready
 from app.core.redis import close_redis, connect_redis
+from app.api.main import api_router
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
@@ -25,3 +26,5 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="HomeManager API", version="1.0.0", lifespan=lifespan)
+
+app.include_router(api_router)
