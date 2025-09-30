@@ -9,9 +9,10 @@ dependencies = [
     "celery>=5.5.3",
     "fastapi>=0.117.1",
     "loguru>=0.7.3",
-    "psycopg2-binary>=2.9.10",
     "pydantic-settings>=2.11.0",
     "redis>=6.4.0",
+    "sqlalchemy>=2.0.43",
+    "sqlmodel>=0.0.25",
     "uvicorn>=0.37.0",
 ]
 
