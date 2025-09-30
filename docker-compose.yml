@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: Dockerfile
     # Command to start the Celery worker
-    command: uv run -m celery -A app.main.celery worker --loglevel=info
+    command: uv run -m celery -A app.tasks.main.celery worker --loglevel=info
     # Mount the current directory
     volumes:
       - .:/app
