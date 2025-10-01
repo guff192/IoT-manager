@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.core.db import db_ready
+from app.core.db import close_async_db, connect_async_db, db_ready
 from app.core.redis import close_redis, connect_redis
 from app.api.main import api_router
 
@@ -18,10 +18,12 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_redis(app)
-    await db_ready()
+    await connect_async_db(app)
+    await db_ready(app)
 
     yield
 
+    await close_async_db(app)
     await close_redis(app)
 
 
