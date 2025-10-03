@@ -70,11 +70,11 @@ services:
     # Set environment variables for database configuration
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_USERNAME=user
+      - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       retries: 5
       start_period: 30s

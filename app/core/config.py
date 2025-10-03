@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     POSTGRES_HOSTNAME: str
     POSTGRES_PORT: int = 5432
-    POSTGRES_USERNAME: str
+    POSTGRES_USER: str
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     def SQLALCHEMY_DATABASE_URL(self) -> PostgresDsn:
         return PostgresDsn.build(
             scheme="postgresql+asyncpg",
-            username=self.POSTGRES_USERNAME,
+            username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
             host=self.POSTGRES_HOSTNAME,
             port=self.POSTGRES_PORT,
