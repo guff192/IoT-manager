@@ -1,5 +1,10 @@
+from typing import TYPE_CHECKING, Optional
 import uuid
 from sqlmodel import Field, Relationship, SQLModel
+
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class DeviceTypeBase(SQLModel):
@@ -31,3 +36,8 @@ class Device(DeviceBase, table=True):
 
     type_id: int | None = Field(default=None, foreign_key="type.id")
     type: DeviceType | None = Relationship(back_populates="devices")
+
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE"
+    )
+    user: Optional["User"] = Relationship(back_populates="devices")
