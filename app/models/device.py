@@ -15,11 +15,10 @@ class DeviceTypeBase(SQLModel):
         description="A type of device (e.g. 'Light', 'Humidity', 'Thermostat')",
     )
 
-    devices: list["Device"] = Relationship(back_populates="type")
-
 
 class DeviceType(DeviceTypeBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    devices: list["Device"] = Relationship(back_populates="type")
 
 
 class DeviceBase(SQLModel):
