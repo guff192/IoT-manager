@@ -33,7 +33,7 @@ class DeviceBase(SQLModel):
 class Device(DeviceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
-    type_id: int | None = Field(default=None, foreign_key="type.id")
+    type_id: int | None = Field(default=None, foreign_key="devicetype.id")
     type: DeviceType | None = Relationship(back_populates="devices")
 
     user_id: uuid.UUID = Field(

@@ -36,7 +36,7 @@ def upgrade() -> None:
     op.create_index("ix_user_email", "user", ["email"], unique=True)
 
     op.create_table(
-        "device_type",
+        "devicetype",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
@@ -51,7 +51,7 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["device_type_id"],
-            ["device_type.id"],
+            ["devicetype.id"],
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
@@ -67,7 +67,7 @@ def downgrade() -> None:
 
     op.drop_table("device")
     op.drop_index(op.f("ix_device_name"), table_name="device")
-    op.drop_table("device_type")
+    op.drop_table("devicetype")
     op.drop_index("ix_user_email", table_name="user")
     op.drop_table("user")
 
