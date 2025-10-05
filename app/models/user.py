@@ -35,4 +35,13 @@ class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
 
-    devices: list["Device"] = Relationship(back_populates="user")
+    devices: list["Device"] = Relationship(back_populates="user", cascade_delete=True)
+
+
+class UserPublic(UserBase):
+    id: uuid.UUID
+
+
+class UsersPublic(SQLModel):
+    data: list[UserPublic]
+    count: int
