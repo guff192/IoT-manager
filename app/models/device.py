@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 if TYPE_CHECKING:
-    from app.models.user import User
+    from app.models import User
 
 
 class DeviceTypeBase(SQLModel):

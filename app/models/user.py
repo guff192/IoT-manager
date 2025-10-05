@@ -5,7 +5,7 @@ from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from app.models.device import Device
+    from app.models import Device
 
 
 class UserBase(SQLModel):
