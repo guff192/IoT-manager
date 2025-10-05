@@ -9,6 +9,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    API_V1_STR: str = "/api/v1"
+
     CELERY_BROKER_URL: str
     CELERY_RESULT_BACKEND: str
 
