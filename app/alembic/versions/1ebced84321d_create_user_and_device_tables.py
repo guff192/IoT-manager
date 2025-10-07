@@ -66,9 +66,12 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Downgrade schema."""
 
-    op.drop_table("device")
     op.drop_index(op.f("ix_device_name"), table_name="device")
+    op.drop_table("device")
+
+    op.drop_index("ix_devicetype_name", table_name="devicetype")
     op.drop_table("devicetype")
+
     op.drop_index("ix_user_email", table_name="user")
     op.drop_table("user")
 
