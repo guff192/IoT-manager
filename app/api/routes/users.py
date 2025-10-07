@@ -20,7 +20,7 @@ async def list_users(session: AsyncSessionDep, skip: int = 0, limit: int = 100) 
     Retrieve users. Requires superuser privileges.
     """
 
-    count = await user_crud.count_users(session=session)   
+    count = await user_crud.count_users(session=session)
     if not count:
         return UsersPublic(data=[], count=0)
 
