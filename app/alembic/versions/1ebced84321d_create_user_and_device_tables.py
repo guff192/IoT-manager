@@ -41,6 +41,7 @@ def upgrade() -> None:
         sa.Column("name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
+    op.create_index("ix_devicetype_name", "devicetype", ["name"], unique=True)
 
     op.create_table(
         "device",
