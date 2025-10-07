@@ -21,7 +21,7 @@ async def list_users(session: AsyncSessionDep, skip: int = 0, limit: int = 100) 
     """
 
     count = await user_crud.count_users(session=session)   
-    if count is None:
+    if not count:
         return UsersPublic(data=[], count=0)
 
     users = await user_crud.list_users(session=session, skip=skip, limit=limit)
