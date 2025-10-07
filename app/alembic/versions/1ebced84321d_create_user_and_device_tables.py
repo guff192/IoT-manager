@@ -50,7 +50,7 @@ def upgrade() -> None:
         sa.Column("type_id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["device_type_id"],
+            ["type_id"],
             ["devicetype.id"],
         ),
         sa.ForeignKeyConstraint(
