@@ -45,7 +45,7 @@ def upgrade() -> None:
 
     op.create_table(
         "device",
-        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
         sa.Column("type_id", sa.Integer(), nullable=False),
