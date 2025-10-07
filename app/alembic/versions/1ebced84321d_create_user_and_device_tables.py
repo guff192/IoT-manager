@@ -47,7 +47,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
-        sa.Column("device_type_id", sa.Integer(), nullable=False),
+        sa.Column("type_id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
             ["device_type_id"],
