@@ -1,5 +1,5 @@
 from typing import Any
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from app.api.deps import AsyncSessionDep, CurrentUser, get_current_active_superuser
 from app.api.exceptions.user import ErrUserExists
@@ -30,7 +30,10 @@ async def list_users(session: AsyncSessionDep, skip: int = 0, limit: int = 100) 
 
 
 @router.post(
-    "/", dependencies=[Depends(get_current_active_superuser)], response_model=UserPublic
+    "/",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=UserPublic,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_user(session: AsyncSessionDep, user_in: UserCreate) -> Any:
     """
@@ -60,7 +63,7 @@ async def update_user_me(
     )
 
 
-@router.post("/signup", response_model=UserPublic)
+@router.post("/signup", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
 async def register_user(session: AsyncSessionDep, user_in: UserRegister) -> Any:
     """
     Create new user with credentials.
