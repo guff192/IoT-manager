@@ -28,6 +28,6 @@ async def lifespan(app: FastAPI):
     await close_redis(app)
 
 
-app = FastAPI(title="HomeManager API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="IoT Manager API", version="1.0.0", lifespan=lifespan)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
