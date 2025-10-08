@@ -90,11 +90,15 @@ async def get_sensor_info(
     user: CurrentUser,
     sensor_id: str,
 ) -> Any:
+    device = await device_crud.get_device_by_sensor_id(session=session, sensor_id=sensor_id)
+    if not device:
+        raise ErrSensorNotFound
+    if device.user_id != user.id:
+        raise ErrNotSensorOwner
+
     sensor = await sensor_crud.get_sensor_by_id(session=session, sensor_id=sensor_id)
     if not sensor:
         raise ErrSensorNotFound
-    if sensor.device.user_id != user.id:
-        raise ErrNotSensorOwner
 
     return sensor
 
@@ -106,11 +110,15 @@ async def update_user_sensor(
     sensor_id: str,
     sensor_in: SensorUpdate,
 ) -> Any:
+    device = await device_crud.get_device_by_sensor_id(session=session, sensor_id=sensor_id)
+    if not device:
+        raise ErrSensorNotFound
+    if device.user_id != user.id:
+        raise ErrNotSensorOwner
+
     sensor = await sensor_crud.get_sensor_by_id(session=session, sensor_id=sensor_id)
     if not sensor:
         raise ErrSensorNotFound
-    if sensor.device.user_id != user.id:
-        raise ErrNotSensorOwner
 
     sensor = await sensor_crud.update_sensor(
         session=session, db_sensor=sensor, sensor_update=sensor_in
@@ -124,11 +132,15 @@ async def delete_user_sensor(
     user: CurrentUser,
     sensor_id: str,
 ) -> dict:
+    device = await device_crud.get_device_by_sensor_id(session=session, sensor_id=sensor_id)
+    if not device:
+        raise ErrSensorNotFound
+    if device.user_id != user.id:
+        raise ErrNotSensorOwner
+
     sensor = await sensor_crud.get_sensor_by_id(session=session, sensor_id=sensor_id)
     if not sensor:
         raise ErrSensorNotFound
-    if sensor.device.user_id != user.id:
-        raise ErrNotSensorOwner
 
     await sensor_crud.delete_sensor(session=session, db_sensor=sensor)
     return {"ok": True}
