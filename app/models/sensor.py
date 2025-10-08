@@ -1,8 +1,7 @@
-from typing import TYPE_CHECKING, Optional
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
-
 
 if TYPE_CHECKING:
     from app.models import Device
