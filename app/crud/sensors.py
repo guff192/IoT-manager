@@ -25,6 +25,12 @@ async def list_sensor_types(*, session: AsyncSession, skip: int = 0, limit: int 
     return [SensorTypePublic.model_validate(obj) for obj in db_objects]
 
 
+async def get_sensor_type_by_name(*, session: AsyncSession, name: str) -> SensorType | None:
+    statement = select(SensorType).where(SensorType.name == name)
+    result = await session.execute(statement)
+    return result.scalar_one_or_none()
+
+
 async def get_sensor_by_id(*, session: AsyncSession, id: str) -> Sensor | None:
     return await session.get(Sensor, id)
 
