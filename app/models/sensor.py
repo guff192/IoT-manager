@@ -50,9 +50,9 @@ class SensorCreate(SensorBase):
     device_id: str
 
 
-class SensorUpdate(SQLModel):
-    name: str | None = Field(default=None)
-    is_active: bool | None = Field(default=None)
+class SensorUpdate(SensorBase):
+    name: str | None = Field(default=None)  # type: ignore
+    is_active: bool | None = Field(default=None)  # type: ignore
     type_id: int | None = Field(default=None)
 
 
