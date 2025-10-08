@@ -6,6 +6,7 @@ from app.models import (
     SensorCreate,
     SensorPublic,
     SensorType,
+    SensorTypeCreate,
     SensorTypePublic,
     SensorUpdate,
     User,
@@ -29,6 +30,14 @@ async def get_sensor_type_by_name(*, session: AsyncSession, name: str) -> Sensor
     statement = select(SensorType).where(SensorType.name == name)
     result = await session.execute(statement)
     return result.scalar_one_or_none()
+
+
+async def create_sensor_type(*, session: AsyncSession, sensor_type_create: SensorTypeCreate) -> SensorType:
+    db_obj = SensorType.model_validate(sensor_type_create)
+    session.add(db_obj)
+    await session.commit()
+    await session.refresh(db_obj)
+    return db_obj
 
 
 async def get_sensor_by_id(*, session: AsyncSession, id: str) -> Sensor | None:
