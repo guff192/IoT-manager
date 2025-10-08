@@ -91,10 +91,7 @@ async def update_device(
     return db_device
 
 
-async def delete_device(
-    *, session: AsyncSession, db_device: Device
-) -> None:
+async def delete_device(*, session: AsyncSession, db_device: Device) -> None:
     await session.delete(db_device)
     await session.commit()
     return
-
