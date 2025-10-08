@@ -47,6 +47,7 @@ class SensorBase(SQLModel):
 
 class SensorCreate(SensorBase):
     type_id: int
+    device_id: str
 
 
 class SensorUpdate(SQLModel):
