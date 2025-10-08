@@ -46,7 +46,7 @@ class SensorBase(SQLModel):
 
 
 class SensorCreate(SensorBase):
-    pass
+    type_id: int
 
 
 class SensorUpdate(SQLModel):
