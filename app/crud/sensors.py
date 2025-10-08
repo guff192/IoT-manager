@@ -19,20 +19,26 @@ async def count_sensor_types(*, session: AsyncSession) -> int | None:
     return result.scalar()
 
 
-async def list_sensor_types(*, session: AsyncSession, skip: int = 0, limit: int = 100) -> list[SensorTypePublic]:
+async def list_sensor_types(
+    *, session: AsyncSession, skip: int = 0, limit: int = 100
+) -> list[SensorTypePublic]:
     statement = select(SensorType).offset(skip).limit(limit)
     result = await session.execute(statement)
     db_objects = result.scalars().all()
     return [SensorTypePublic.model_validate(obj) for obj in db_objects]
 
 
-async def get_sensor_type_by_name(*, session: AsyncSession, name: str) -> SensorType | None:
+async def get_sensor_type_by_name(
+    *, session: AsyncSession, name: str
+) -> SensorType | None:
     statement = select(SensorType).where(SensorType.name == name)
     result = await session.execute(statement)
     return result.scalar_one_or_none()
 
 
-async def create_sensor_type(*, session: AsyncSession, sensor_type_create: SensorTypeCreate) -> SensorType:
+async def create_sensor_type(
+    *, session: AsyncSession, sensor_type_create: SensorTypeCreate
+) -> SensorType:
     db_obj = SensorType.model_validate(sensor_type_create)
     session.add(db_obj)
     await session.commit()
@@ -50,8 +56,12 @@ async def count_user_sensors(*, session: AsyncSession, user: User) -> int | None
     return result.scalar()
 
 
-async def list_user_sensors(*, session: AsyncSession, user: User, skip: int = 0, limit: int = 100) -> list[SensorPublic]:
-    statement = select(Sensor).where(Sensor.device.user_id == user.id).offset(skip).limit(limit)
+async def list_user_sensors(
+    *, session: AsyncSession, user: User, skip: int = 0, limit: int = 100
+) -> list[SensorPublic]:
+    statement = (
+        select(Sensor).where(Sensor.device.user_id == user.id).offset(skip).limit(limit)
+    )
     result = await session.execute(statement)
     db_objects = result.scalars().all()
     return [SensorPublic.model_validate(obj) for obj in db_objects]
