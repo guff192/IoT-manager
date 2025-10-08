@@ -9,7 +9,7 @@ from app.api.exceptions.user import ErrUserNotFound
 from app.core import security
 from app.core.config import settings
 from app.crud import users as user_crud
-from app.models.jwt import Token
+from app.models import Token
 
 router = APIRouter(tags=["login"])
 

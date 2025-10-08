@@ -2,8 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import func, select
 
 from app.core.security import get_password_hash, verify_password
-from app.models import User, UserCreate
-from app.models.user import UserPublic, UserUpdate
+from app.models import User, UserCreate, UserPublic, UserUpdate
 
 
 async def create_user(*, session: AsyncSession, user_create: UserCreate) -> User:

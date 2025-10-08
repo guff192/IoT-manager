@@ -1,8 +1,9 @@
 import uuid
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import func, select
 
-from app.models.device import (
+from app.models import (
     Device,
     DeviceCreate,
     DevicePublic,
@@ -10,8 +11,8 @@ from app.models.device import (
     DeviceTypeCreate,
     DeviceTypePublic,
     DeviceUpdate,
+    User,
 )
-from app.models.user import User
 
 
 async def count_device_types(*, session: AsyncSession) -> int | None:

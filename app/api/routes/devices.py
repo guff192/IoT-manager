@@ -7,7 +7,7 @@ from app.api.exceptions.device import (
     ErrDeviceTypeExists,
     ErrNotDeviceOwner,
 )
-from app.models.device import (
+from app.models import (
     DeviceCreate,
     DevicePublic,
     DeviceTypeCreate,

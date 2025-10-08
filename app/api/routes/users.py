@@ -1,11 +1,11 @@
 from typing import Any
+
 from fastapi import APIRouter, Depends, status
 
 from app.api.deps import AsyncSessionDep, CurrentUser, get_current_active_superuser
 from app.api.exceptions.user import ErrUserExists
 from app.crud import users as user_crud
-from app.models import UserCreate, UserPublic, UserRegister
-from app.models.user import UserUpdate, UsersPublic
+from app.models import UserCreate, UserPublic, UserRegister, UsersPublic, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
 
