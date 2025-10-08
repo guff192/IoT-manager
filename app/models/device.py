@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel
 
 
 if TYPE_CHECKING:
-    from app.models import User
+    from app.models import User, Sensor
 
 
 class DeviceTypeBase(SQLModel):
@@ -64,6 +64,8 @@ class Device(DeviceBase, table=True):
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
     user: "User" = Relationship(back_populates="devices")
+
+    sensors: list["Sensor"] = Relationship(back_populates="device", cascade_delete=True)
 
 
 class DevicePublic(DeviceBase):
