@@ -57,13 +57,13 @@ class DeviceUpdate(DeviceBase):
 class Device(DeviceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
-    type_id: int | None = Field(default=None, foreign_key="devicetype.id")
-    type: DeviceType | None = Relationship(back_populates="devices")
+    type_id: int = Field(foreign_key="devicetype.id", nullable=False)
+    type: DeviceType = Relationship(back_populates="devices")
 
     user_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
-    user: Optional["User"] = Relationship(back_populates="devices")
+    user: "User" = Relationship(back_populates="devices")
 
 
 class DevicePublic(DeviceBase):
