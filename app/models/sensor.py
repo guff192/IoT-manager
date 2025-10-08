@@ -58,15 +58,13 @@ class SensorUpdate(SQLModel):
 class Sensor(SensorBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
-    type_id: int | None = Field(
-        default=None, foreign_key="sensortype.id", ondelete="CASCADE"
-    )
+    type_id: int = Field(foreign_key="sensortype.id", nullable=False)
     type: SensorType = Relationship(back_populates="sensors")
-    
+
     device_id: uuid.UUID = Field(
-        default=None, foreign_key="device.id", ondelete="CASCADE"
+        foreign_key="device.id", nullable=False, ondelete="CASCADE"
     )
-    device: Optional["Device"] = Relationship(back_populates="sensors")
+    device: "Device" = Relationship(back_populates="sensors")
 
 
 class SensorPublic(SensorBase):
