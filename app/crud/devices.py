@@ -11,6 +11,7 @@ from app.models import (
     DeviceTypeCreate,
     DeviceTypePublic,
     DeviceUpdate,
+    Sensor,
     User,
 )
 
@@ -60,6 +61,14 @@ async def count_user_devices(*, session: AsyncSession, user: User) -> int | None
 
 async def get_device_by_id(*, session: AsyncSession, device_id: str) -> Device | None:
     return await session.get(Device, uuid.UUID(device_id))
+
+
+async def get_device_by_sensor_id(
+    *, session: AsyncSession, sensor_id: str
+) -> Device | None:
+    statement = select(Device).join(Sensor).where(Sensor.id == sensor_id)
+    result = await session.execute(statement)
+    return result.scalar_one_or_none()
 
 
 async def list_user_devices(*, session: AsyncSession, user: User):
