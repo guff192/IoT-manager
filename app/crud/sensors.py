@@ -46,8 +46,8 @@ async def create_sensor_type(
     return db_obj
 
 
-async def get_sensor_by_id(*, session: AsyncSession, id: str) -> Sensor | None:
-    return await session.get(Sensor, id)
+async def get_sensor_by_id(*, session: AsyncSession, sensor_id: str) -> Sensor | None:
+    return await session.get(Sensor, sensor_id)
 
 
 async def count_user_sensors(*, session: AsyncSession, user: User) -> int | None:
