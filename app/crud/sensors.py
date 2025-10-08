@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import func, select
 
 from app.models import (
+    Device,
     Sensor,
     SensorCreate,
     SensorPublic,
@@ -51,7 +52,7 @@ async def get_sensor_by_id(*, session: AsyncSession, sensor_id: str) -> Sensor |
 
 
 async def count_user_sensors(*, session: AsyncSession, user: User) -> int | None:
-    statement = select(func.count()).where(Sensor.device.user_id == user.id)
+    statement = select(func.count()).select_from(Sensor).join(Device).where(Device.user_id == user.id)
     result = await session.execute(statement)
     return result.scalar()
 
@@ -60,7 +61,7 @@ async def list_user_sensors(
     *, session: AsyncSession, user: User, skip: int = 0, limit: int = 100
 ) -> list[SensorPublic]:
     statement = (
-        select(Sensor).where(Sensor.device.user_id == user.id).offset(skip).limit(limit)
+        select(Sensor).join(Device).where(Device.user_id == user.id).offset(skip).limit(limit)
     )
     result = await session.execute(statement)
     db_objects = result.scalars().all()
