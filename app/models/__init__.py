@@ -21,6 +21,12 @@ from .sensor import (
     SensorTypesPublic,
     SensorUpdate,
 )
+from .sensor_data import (
+    SensorData,
+    SensorDataCreate,
+    SensorDataPublic,
+    SensorDatasPublic,
+)
 from .user import User, UserCreate, UserPublic, UserRegister, UsersPublic, UserUpdate
 
 __all__ = [
@@ -50,4 +56,8 @@ __all__ = [
     "SensorTypeCreate",
     "SensorTypePublic",
     "SensorTypesPublic",
+    "SensorData",
+    "SensorDataCreate",
+    "SensorDataPublic",
+    "SensorDatasPublic",
 ]
