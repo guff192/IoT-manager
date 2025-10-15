@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from app.models import Device
+    from app.models import Device, SensorData
 
 
 class SensorTypeBase(SQLModel):
@@ -65,6 +65,8 @@ class Sensor(SensorBase, table=True):
         foreign_key="device.id", nullable=False, ondelete="CASCADE"
     )
     device: "Device" = Relationship(back_populates="sensors")
+
+    data: list["SensorData"] = Relationship(back_populates="sensor")
 
 
 class SensorPublic(SensorBase):
