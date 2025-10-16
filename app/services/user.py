@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 
-from app.api.exceptions.user import ErrUserExists
+from app.api.exceptions.user import ErrNotEnoughPrivileges, ErrUserExists
 from app.crud import users as user_crud
 from app.models.user import (
     User,
@@ -37,6 +37,9 @@ class UserService:
         return user_public
 
     async def update_user_me_service(self, user: User, user_in: UserUpdate) -> UserPublic:
+        if user_in.is_superuser and not user.is_superuser:
+            raise ErrNotEnoughPrivileges("You should be superuser to change is_superuser.")
+
         user = await user_crud.update_user(
             session=self.session, db_user=user, user_in=user_in
         )
