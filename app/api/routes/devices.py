@@ -1,24 +1,18 @@
 from typing import Annotated, Any
+
 from fastapi import APIRouter, Depends, status
 
 from app.api.deps import AsyncSessionDep, CurrentUser, get_current_active_superuser
-from app.api.exceptions.device import (
-    ErrDeviceNotFound,
-    ErrDeviceTypeExists,
-    ErrNotDeviceOwner,
-)
 from app.models import (
     DeviceCreate,
     DevicePublic,
+    DevicesPublic,
     DeviceTypeCreate,
     DeviceTypePublic,
     DeviceTypesPublic,
     DeviceUpdate,
-    DevicesPublic,
 )
-from app.crud import devices as device_crud
 from app.services.devices import DeviceService
-
 
 router = APIRouter(prefix="/devices", tags=["devices"])
 
