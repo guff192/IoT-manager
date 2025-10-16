@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, status
 
@@ -6,8 +6,17 @@ from app.api.deps import AsyncSessionDep, CurrentUser, get_current_active_superu
 from app.api.exceptions.user import ErrUserExists
 from app.crud import users as user_crud
 from app.models import UserCreate, UserPublic, UserRegister, UsersPublic, UserUpdate
+from app.services.user import UserService
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+
+async def user_service_dependency(session: AsyncSessionDep) -> UserService:
+    """Dependency that creates and provides a UserService instance, injecting the DB session."""
+    return UserService(session=session)
+
+
+UserServiceDep = Annotated[UserService, Depends(user_service_dependency)]
 
 
 @router.get(
@@ -15,18 +24,15 @@ router = APIRouter(prefix="/users", tags=["users"])
     dependencies=[Depends(get_current_active_superuser)],
     response_model=UsersPublic,
 )
-async def list_users(session: AsyncSessionDep, skip: int = 0, limit: int = 100) -> Any:
+async def list_users(
+    user_service: UserServiceDep, skip: int = 0, limit: int = 100
+) -> Any:
     """
     Retrieve users. Requires superuser privileges.
     """
 
-    count = await user_crud.count_users(session=session)
-    if not count:
-        return UsersPublic(data=[], count=0)
-
-    users = await user_crud.list_users(session=session, skip=skip, limit=limit)
-
-    return UsersPublic(data=users, count=count)
+    users = await user_service.list_users_service(skip, limit)
+    return users
 
 
 @router.post(
@@ -35,43 +41,36 @@ async def list_users(session: AsyncSessionDep, skip: int = 0, limit: int = 100) 
     response_model=UserPublic,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_user(session: AsyncSessionDep, user_in: UserCreate) -> Any:
+async def create_user(user_service: UserServiceDep, user_in: UserCreate) -> Any:
     """
     Create new user. Requires superuser privileges.
     """
-    user = await user_crud.create_user(session=session, user_create=user_in)
+    user = await user_service.create_user_service(user_in=user_in)
     return user
 
 
 @router.get("/me/", response_model=UserPublic)
-async def read_user_me(user: CurrentUser) -> Any:
+async def read_user_me(user_service: UserServiceDep, user: CurrentUser) -> Any:
     """
     Get current user.
     """
-    return user
+    return await user_service.read_user_me_service(user)
 
 
 @router.patch("/me/", response_model=UserPublic)
 async def update_user_me(
-    session: AsyncSessionDep, user: CurrentUser, user_update: UserUpdate
+    user_service: UserServiceDep, user: CurrentUser, user_update: UserUpdate
 ) -> Any:
     """
     Update own user.
     """
-    return await user_crud.update_user(
-        session=session, db_user=user, user_in=user_update
-    )
+    return await user_service.update_user_me_service(user=user, user_in=user_update)
 
 
 @router.post("/signup", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
-async def register_user(session: AsyncSessionDep, user_in: UserRegister) -> Any:
+async def register_user(user_service: UserServiceDep, user_in: UserRegister) -> Any:
     """
     Create new user with credentials.
     """
-    user = await user_crud.get_user_by_email(session=session, email=user_in.email)
-    if user:
-        raise ErrUserExists
-
-    user_create = UserCreate.model_validate(user_in)
-    user = await user_crud.create_user(session=session, user_create=user_create)
+    user = await user_service.register_user_service(user_in=user_in)
     return user
