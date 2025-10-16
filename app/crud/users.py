@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import func, select
 
-from app.core.security import get_password_hash, verify_password
+from app.core.security import get_password_hash
 from app.models import User, UserCreate, UserPublic, UserUpdate
 
 
@@ -49,15 +49,4 @@ async def update_user(
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
-    return db_user
-
-
-async def authenticate(
-    *, session: AsyncSession, email: str, password: str
-) -> User | None:
-    db_user = await get_user_by_email(session=session, email=email)
-    if not db_user:
-        return None
-    if not verify_password(password, db_user.hashed_password):
-        return None
     return db_user
