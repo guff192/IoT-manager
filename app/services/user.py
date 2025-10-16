@@ -3,7 +3,7 @@ from loguru import logger
 
 from app.api.exceptions.user import ErrNotEnoughPrivileges, ErrUserExists
 from app.crud import users as user_crud
-from app.models.user import (
+from app.models import (
     User,
     UserCreate,
     UserPublic,

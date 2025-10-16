@@ -6,9 +6,16 @@ from app.api.exceptions.device import (
     ErrNotDeviceOwner,
 )
 from app.crud import devices as device_crud
-from app.models import DeviceTypeCreate, DeviceTypePublic, DeviceTypesPublic
-from app.models.device import DeviceCreate, DevicePublic, DevicesPublic, DeviceUpdate
-from app.models.user import User
+from app.models import (
+    DeviceCreate,
+    DevicePublic,
+    DevicesPublic,
+    DeviceTypeCreate,
+    DeviceTypePublic,
+    DeviceTypesPublic,
+    DeviceUpdate,
+    User,
+)
 
 
 class DeviceService:
