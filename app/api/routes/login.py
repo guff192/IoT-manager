@@ -20,7 +20,7 @@ AuthServiceDep = Annotated[AuthService, Depends(auth_service_dependency)]
 
 @router.post("/login/access-token")
 async def login_access_token(
-    auth_service: AuthService, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    auth_service: AuthServiceDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
     """
     OAuth2 compatible token login, get an access token for future requests
