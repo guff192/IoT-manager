@@ -4,8 +4,7 @@ from fastapi import APIRouter, Depends, status
 
 from app.api.deps import AsyncSessionDep, CurrentUser, get_current_active_superuser
 from app.api.exceptions.user import ErrUserExists
-from app.crud import users as user_crud
-from app.models import UserCreate, UserPublic, UserRegister, UsersPublic, UserUpdate
+from app.schemas.user import UserCreate, UserPublic, UserRegister, UsersPublic, UserUpdate
 from app.services.user import UserService
 
 router = APIRouter(prefix="/users", tags=["users"])
