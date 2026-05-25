@@ -3,7 +3,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, status
 
 from app.api.deps import AsyncSessionDep, CurrentUser, get_current_active_superuser
-from app.models import (
+from app.schemas.sensor import (
     SensorCreate,
     SensorPublic,
     SensorsPublic,

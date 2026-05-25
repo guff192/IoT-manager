@@ -13,7 +13,9 @@ from app.api.exceptions.user import ErrNotEnoughPrivileges, ErrUnauthorized, Err
 from app.core import security
 from app.core.config import settings
 from app.models import TokenPayload
-from app.models import User
+from app.models.domain.user import User
+from app.models.persistence.user import UserTable
+from app.mappers.user import to_domain
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
@@ -47,11 +49,11 @@ async def get_current_user(session: AsyncSessionDep, token: TokenDep) -> User:
     except (jwt.InvalidTokenError, ValidationError):
         raise ErrUnauthorized(detail="Could not validate credentials")
 
-    user = await session.get(User, token_data.sub)
-    if not user:
+    user_table = await session.get(UserTable, token_data.sub)
+    if not user_table:
         raise ErrUserNotFound
 
-    return user
+    return to_domain(user_table)
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]

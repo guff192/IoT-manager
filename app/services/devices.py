@@ -6,7 +6,9 @@ from app.api.exceptions.device import (
     ErrNotDeviceOwner,
 )
 from app.crud import devices as device_crud
-from app.models import (
+from app.models.domain.user import User
+from app.models.domain.device import Device
+from app.schemas.device import (
     DeviceCreate,
     DevicePublic,
     DevicesPublic,
@@ -14,7 +16,13 @@ from app.models import (
     DeviceTypePublic,
     DeviceTypesPublic,
     DeviceUpdate,
-    User,
+)
+from app.mappers.device import (
+    to_domain,
+    to_public,
+    to_domain_type,
+    to_public_type,
+    to_persistence_type,
 )
 
 
@@ -35,73 +43,83 @@ class DeviceService:
         if not count:
             return DeviceTypesPublic(data=[], count=0)
 
-        devices = await device_crud.list_device_types(
+        type_tables = await device_crud.list_device_types(
             session=self.session, skip=skip, limit=limit
         )
-        return DeviceTypesPublic(data=devices, count=count)
+        
+        # Map Persistence -> Domain -> Schema
+        types_public = [to_public_type(to_domain_type(tt)) for tt in type_tables]
+        return DeviceTypesPublic(data=types_public, count=count)
 
     async def create_device_type_service(
         self, device_type_in: DeviceTypeCreate
     ) -> DeviceTypePublic:
-        device_type = await device_crud.get_device_type_by_name(
+        device_type_table = await device_crud.get_device_type_by_name(
             session=self.session, name=device_type_in.name
         )
-        if device_type:
+        if device_type_table:
             raise ErrDeviceTypeExists(name=device_type_in.name)
 
-        device_type = await device_crud.create_device_type(
-            session=self.session, device_type_create=device_type_in
+        device_type_table = await device_crud.create_device_type(
+            session=self.session, name=device_type_in.name
         )
-        return DeviceTypePublic.model_validate(device_type)
+        return to_public_type(to_domain_type(device_type_table))
 
     async def list_user_devices_service(self, user: User) -> DevicesPublic:
-        count = await device_crud.count_user_devices(session=self.session, user=user)
+        count = await device_crud.count_user_devices(session=self.session, user_id=user.id)
         if not count:
             return DevicesPublic(data=[], count=0)
 
-        devices = await device_crud.list_user_devices(session=self.session, user=user)
-        return DevicesPublic(data=devices, count=count)
+        device_tables = await device_crud.list_user_devices(session=self.session, user_id=user.id)
+        
+        # Map Persistence -> Domain -> Schema
+        devices_public = [to_public(to_domain(dt)) for dt in device_tables]
+        return DevicesPublic(data=devices_public, count=count)
 
     async def create_user_device_service(
         self, user: User, device_in: DeviceCreate
     ) -> DevicePublic:
-        device = await device_crud.create_device(
-            session=self.session, user=user, device_create=device_in
+        device_table = await device_crud.create_device(
+            session=self.session, 
+            user_id=user.id, 
+            name=device_in.name, 
+            is_active=device_in.is_active, 
+            type_id=device_in.type_id
         )
-        return DevicePublic.model_validate(device)
+        return to_public(to_domain(device_table))
 
     async def get_device_info_service(self, user: User, device_id: str) -> DevicePublic:
-        device = await device_crud.get_device_by_id(
+        device_table = await device_crud.get_device_by_id(
             session=self.session, device_id=device_id
         )
-        if not device:
+        if not device_table:
             raise ErrDeviceNotFound
-        if device.user_id != user.id:
+        if device_table.user_id != user.id:
             raise ErrNotDeviceOwner
 
-        return DevicePublic.model_validate(device)
+        return to_public(to_domain(device_table))
 
     async def update_user_device_service(
         self, user: User, device_id: str, device_in: DeviceUpdate
     ) -> DevicePublic:
-        device = await device_crud.get_device_by_id(session=self.session, device_id=device_id)
-        if not device:
+        device_table = await device_crud.get_device_by_id(session=self.session, device_id=device_id)
+        if not device_table:
             raise ErrDeviceNotFound
-        if device.user_id != user.id:
+        if device_table.user_id != user.id:
             raise ErrNotDeviceOwner
 
-        device = await device_crud.update_device(
-            session=self.session, db_device=device, device_update=device_in
+        updated_table = await device_crud.update_device(
+            session=self.session, db_device=device_table, update_data=device_in.model_dump(exclude_unset=True)
         )
-        return DevicePublic.model_validate(device)
+        return to_public(to_domain(updated_table))
 
     async def delete_user_device_service(
         self, user: User, device_id: str
     ) -> None:
-        device = await device_crud.get_device_by_id(session=self.session, device_id=device_id)
-        if not device:
+        device_table = await device_crud.get_device_by_id(session=self.session, device_id=device_id)
+        if not device_table:
             raise ErrDeviceNotFound
-        if device.user_id != user.id:
+        if device_table.user_id != user.id:
             raise ErrNotDeviceOwner
 
-        await device_crud.delete_device(session=self.session, db_device=device)
+        await device_crud.delete_device(session=self.session, db_device=device_table)
